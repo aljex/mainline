@@ -1,4 +1,10 @@
-mainline (1.0.14) UNRELEASED; urgency=medium
+mainline (1.0.15) UNRELEASED; urgency=medium
+
+  * Moving to GtkHeaderbar
+
+ -- Mirko Brombin <send@mirko.pm>  Sat, 10 Apr 2021 13:13:00 -0400
+
+ mainline (1.0.14) UNRELEASED; urgency=medium
 
   * Remove unnecessary VERSION_INT and build-time dependency for "bc"
 

@@ -34,6 +34,7 @@ using TeeJee.Misc;
 
 public class MainWindow : Gtk.Window{
 
+    private Gtk.HeaderBar hbar;
 	private Gtk.Box vbox_main;
 	private Gtk.Box hbox_list;
 
@@ -58,6 +59,11 @@ public class MainWindow : Gtk.Window{
 		title = BRANDING_LONGNAME;
 		window_position = WindowPosition.CENTER;
 		icon = get_app_icon(16);
+
+        // hbar
+        hbar = new Gtk.HeaderBar();
+        hbar.set_show_close_button(true);
+        set_titlebar(hbar);
 
 		// vbox_main
 		vbox_main = new Gtk.Box(Orientation.VERTICAL, 6);
@@ -306,13 +312,20 @@ public class MainWindow : Gtk.Window{
 	}
 
 	private void init_actions(){
-
-		var hbox = new Gtk.Box(Orientation.VERTICAL, 6);
-		hbox_list.add (hbox);
+        // menu
+        var menu_button = new Gtk.Button.from_icon_name ("open-menu-symbolic");
+        var pop = new Gtk.Popover (menu_button);
+        var pop_hbox = new Gtk.Box(Orientation.VERTICAL, 6);
+        pop.add(pop_hbox);
+        menu_button.clicked.connect (() => {
+            pop.show_all();
+        });
+        hbar.pack_end(menu_button);
 
 		// refresh
-		var button = new Gtk.Button.with_label (_("Refresh"));
-		hbox.pack_start (button, true, true, 0);
+		var button = new Gtk.Button.from_icon_name ("view-refresh-symbolic");
+		button.set_tooltip_text(_("Refresh"));
+		hbar.pack_start (button);
 		btn_refresh = button;
 
 		button.clicked.connect(() => {
@@ -327,8 +340,9 @@ public class MainWindow : Gtk.Window{
 		});
 
 		// install
-		button = new Gtk.Button.with_label (_("Install"));
-		hbox.pack_start (button, true, true, 0);
+		button = new Gtk.Button.from_icon_name ("list-add-symbolic");
+		button.set_tooltip_text(_("Install"));
+		hbar.pack_start (button);
 		btn_install = button;
 
 		button.clicked.connect(() => {
@@ -343,9 +357,22 @@ public class MainWindow : Gtk.Window{
 			}
 		});
 
+		// changes
+		button = new Gtk.Button.from_icon_name ("view-layout-symbolic");
+		button.set_tooltip_text(_("Changes"));
+		hbar.pack_start (button);
+		btn_changes = button;
+
+		button.clicked.connect(() => {
+			if ((selected_kernels.size == 1) && file_exists(selected_kernels[0].changes_file)){
+				xdg_open(selected_kernels[0].changes_file);
+			}
+		});
+
 		// remove
-		button = new Gtk.Button.with_label (_("Remove"));
-		hbox.pack_start (button, true, true, 0);
+		button = new Gtk.Button.from_icon_name ("user-trash-symbolic");
+		button.set_tooltip_text(_("Remove"));
+		hbar.pack_start (button);
 		btn_remove = button;
 
 		button.clicked.connect(() => {
@@ -388,9 +415,10 @@ public class MainWindow : Gtk.Window{
 		});
 
 		// purge
-		button = new Gtk.Button.with_label (_("Purge"));
-		button.set_tooltip_text(_("Remove installed kernels older than running kernel"));
-		hbox.pack_start (button, true, true, 0);
+		var model_button = new Gtk.ModelButton ();
+		model_button.text = ("Purge");
+		model_button.set_tooltip_text(_("Remove installed kernels older than running kernel"));
+		pop_hbox.add (model_button);
 		btn_purge = button;
 
 		button.clicked.connect(() => {
@@ -420,22 +448,13 @@ public class MainWindow : Gtk.Window{
 			term.execute_script(t_file,t_dir);
 		});
 
-		// changes
-		button = new Gtk.Button.with_label (_("Changes"));
-		hbox.pack_start (button, true, true, 0);
-		btn_changes = button;
-
-		button.clicked.connect(() => {
-			if ((selected_kernels.size == 1) && file_exists(selected_kernels[0].changes_file)){
-				xdg_open(selected_kernels[0].changes_file);
-			}
-		});
-
 		// settings
-		button = new Gtk.Button.with_label (_("Settings"));
-		hbox.pack_start (button, true, true, 0);
+		model_button = new Gtk.ModelButton ();
+		model_button.text = ("Settings");
+		model_button.set_tooltip_text(("Settings"));
+		pop_hbox.add (model_button);
 
-		button.clicked.connect(() => {
+		model_button.clicked.connect(() => {
 
 			int _show_prev_majors = App.show_prev_majors;
 			bool _hide_unstable = App.hide_unstable;
@@ -455,10 +474,12 @@ public class MainWindow : Gtk.Window{
 		});
 
 		// about
-		button = new Gtk.Button.with_label (_("About"));
-		hbox.pack_start (button, true, true, 0);
+		model_button = new Gtk.ModelButton ();
+		model_button.text = ("About");
+		model_button.set_tooltip_text(("About"));
+		pop_hbox.add (model_button);
 
-		button.clicked.connect(btn_about_clicked);
+		model_button.clicked.connect(btn_about_clicked);
 	}
 
 	private void btn_about_clicked () {

@@ -34,7 +34,7 @@ namespace TeeJee.System{
 		if (App.skip_connection_check) return true;
 
 		string std_err, std_out;
-		string cmd = "aria2c --no-netrc --no-conf --connect-timeout="+App.connect_timeout_seconds.to_string()+" --max-file-not-found=3 --retry-wait=2 --max-tries=3 --dry-run --quiet https://www.google.com/";
+		string cmd = "aria2c --no-netrc --no-conf --connect-timeout="+App.connect_timeout_seconds.to_string()+" --max-file-not-found=3 --retry-wait=2 --max-tries=3 --dry-run --quiet https://www.google.com/search?q=test";
 
 		int status = exec_sync(cmd, out std_out, out std_err);
 
